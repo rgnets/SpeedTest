@@ -53,7 +53,10 @@ const std::vector<ServerInfo>& SpeedTest::serverList() {
         return mServerList;
 
     int http_code = 0;
-    if (fetchServers(SPEED_TEST_SERVER_LIST_URL, mServerList, http_code) && http_code == 200){
+    if (fetchServersXML(SPEED_TEST_SERVERS_XML_URL, mServerList, http_code) && http_code == 200){
+        return mServerList;
+    }
+    if (fetchServersJSON(SPEED_TEST_SERVERS_JSON_URL, mServerList, http_code) && http_code == 200){
         return mServerList;
     }
     return mServerList;
@@ -416,7 +419,50 @@ ServerInfo SpeedTest::processServerXMLNode(xmlTextReaderPtr reader) {
     return ServerInfo();
 }
 
-bool SpeedTest::fetchServers(const std::string& url, std::vector<ServerInfo>& target, int &http_code) {
+ServerInfo SpeedTest::processServerJSONNode(Json::Value server) {
+    ServerInfo info;
+
+    auto server_url     = server["url"];
+    auto server_lat     = server["lat"];
+    auto server_lon     = server["lon"];
+    auto server_name    = server["name"];
+    auto server_country = server["country"];
+    auto server_cc      = server["cc"];
+    auto server_host    = server["host"];
+    auto server_id      = server["id"];
+    auto server_sponsor = server["sponsor"];
+
+    if (server_name)
+        info.name = server_name.asString();
+
+    if (server_url)
+        info.url = server_url.asString();
+
+    if (server_country)
+        info.country = server_country.asString();
+
+    if (server_cc)
+        info.country_code = server_cc.asString();
+
+    if (server_host)
+        info.host = server_host.asString();
+
+    if (server_sponsor)
+        info.sponsor = server_sponsor.asString();
+
+    if (server_id)
+        info.id = std::atoi(server_id.asCString());
+
+    if (server_lat)
+        info.lat = std::stof(server_lat.asCString());
+
+    if (server_lon)
+        info.lon = std::stof(server_lon.asCString());
+
+    return info;
+}
+
+bool SpeedTest::fetchServersXML(const std::string& url, std::vector<ServerInfo>& target, int &http_code) {
     std::stringstream oss;
     target.clear();
 
@@ -494,6 +540,62 @@ bool SpeedTest::fetchServers(const std::string& url, std::vector<ServerInfo>& ta
     return true;
 }
 
+bool SpeedTest::fetchServersJSON(const std::string& url, std::vector<ServerInfo>& target, int &http_code) {
+    std::stringstream oss;
+    Json::CharReaderBuilder builder;
+    Json::Value root;
+    JSONCPP_STRING errs;
+
+    target.clear();
+
+    auto isHttpSchema = url.find_first_of("http") == 0;
+
+    CURL* curl = curl_easy_init();
+    auto cres = httpGet(url, oss, curl, 20);
+
+    if (cres != CURLE_OK)
+        return false;
+
+    if (isHttpSchema) {
+        int req_status;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &req_status);
+        http_code = req_status;
+
+        if (http_code != 200){
+            curl_easy_cleanup(curl);
+            return false;
+        }
+    } else {
+        http_code = 200;
+    }
+
+    if (!parseFromStream(builder, oss, &root, &errs)) {
+        curl_easy_cleanup(curl);
+        std::cerr << "Failed to parse" << std::endl;
+        return false;
+    }
+
+    IPInfo ipInfo;
+    if (!SpeedTest::ipInfo(ipInfo)){
+        curl_easy_cleanup(curl);
+        std::cerr << "OOPS!" <<std::endl;
+        return false;
+    }
+
+    for (auto &server : root) {
+        ServerInfo info = processServerJSONNode(server);
+        if (!info.url.empty()){
+            info.distance = harversine(std::make_pair(ipInfo.lat, ipInfo.lon), std::make_pair(info.lat, info.lon));
+            target.push_back(info);
+        }
+    }
+
+    /**/
+
+    curl_easy_cleanup(curl);
+    return true;
+}
+
 const ServerInfo SpeedTest::findBestServerWithin(const std::vector<ServerInfo> &serverList, long &latency,
                                                  const int sample_size, std::function<void(bool)> cb) {
     int i = sample_size;
@@ -557,3 +659,5 @@ void SpeedTest::setInsecure(bool insecure) {
     // when insecure is off, we want ssl cert to be verified.
     this->strict_ssl_verify = !insecure;
 }
+
+/* vim: set et sw=4 sts=4: */

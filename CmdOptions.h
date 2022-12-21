@@ -11,6 +11,7 @@ enum OutputType { verbose, text, json };
 
 typedef struct program_options_t {
     bool help     = false;
+    bool list     = false;
     bool latency  = false;
     bool download = false;
     bool upload   = false;
@@ -22,6 +23,7 @@ typedef struct program_options_t {
 
 static struct option CmdLongOptions[] = {
         {"help",        no_argument,       0, 'h' },
+        {"list",        no_argument,       0, 'L' },
         {"latency",     no_argument,       0, 'l' },
         {"download",    no_argument,       0, 'd' },
         {"upload",      no_argument,       0, 'u' },
@@ -32,7 +34,7 @@ static struct option CmdLongOptions[] = {
         {0,             0,                 0,  0  }
 };
 
-const char *optStr = "hldusiqt:o:";
+const char *optStr = "hLldusiqt:o:";
 
 bool ParseOptions(const int argc, const char **argv, ProgramOptions& options){
     int long_index =0;
@@ -41,6 +43,9 @@ bool ParseOptions(const int argc, const char **argv, ProgramOptions& options){
         switch (opt){
             case 'h':
                 options.help     = true;
+                break;
+            case 'L':
+                options.list     = true;
                 break;
             case 'l':
                 options.latency  = true;

@@ -8,6 +8,7 @@
 #include "SpeedTestConfig.h"
 #include "SpeedTestClient.h"
 #include <libxml/xmlreader.h>
+#include <json/json.h>
 #include <functional>
 #include <cmath>
 #include <curl/curl.h>
@@ -45,12 +46,14 @@ public:
     bool jitter(const ServerInfo& server, long& result, int sample = 40);
     bool share(const ServerInfo& server, std::string& image_url);
 private:
-    bool fetchServers(const std::string& url,  std::vector<ServerInfo>& target, int &http_code);
+    bool fetchServersXML(const std::string& url, std::vector<ServerInfo>& target, int &http_code);
+    bool fetchServersJSON(const std::string& url, std::vector<ServerInfo>& target, int &http_code);
     bool testLatency(SpeedTestClient& client, int sample_size, long& latency);
     const ServerInfo findBestServerWithin(const std::vector<ServerInfo>& serverList, long& latency, int sample_size = 5, std::function<void(bool)> cb = nullptr);
     static CURL* curl_setup(CURL* curl = nullptr);
     static size_t writeFunc(void* buf, size_t size, size_t nmemb, void* userp);
     static ServerInfo processServerXMLNode(xmlTextReaderPtr reader);
+    static ServerInfo processServerJSONNode(Json::Value server);
     double execute(const ServerInfo &server, const TestConfig &config, const opFn &fnc, std::function<void(bool)> cb = nullptr);
     template <typename T>
         static T deg2rad(T n);
