@@ -2,7 +2,7 @@
 #define SpeedTest_VERSION_MAJOR 1
 #define SpeedTest_VERSION_MINOR 14
 #define SpeedTest_AUTHOR "Francesco Laurita <francesco.laurita@gmail.com>"
-#define SpeedTest_HOME_PAGE "https://github.com/taganaka/SpeedTest"
+#define SpeedTest_HOME_PAGE "https://git.rgnets.com/oprs1/SpeedTest"
 
 #define SPEED_TEST_USER_AGENT "Mozilla/5.0 ${CMAKE_SYSTEM}; U; ${CMAKE_SYSTEM_PROCESSOR}; en-us (KHTML, like Gecko) SpeedTest++/${SpeedTest_VERSION_MAJOR}.${SpeedTest_VERSION_MINOR}"
 #define SPEED_TEST_SERVERS_XML_URL "https://www.speedtest.net/speedtest-servers.php"

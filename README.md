@@ -1,10 +1,7 @@
-[![Build Status](https://travis-ci.org/taganaka/SpeedTest.svg?branch=master)](https://travis-ci.org/taganaka/SpeedTest)
-
 # SpeedTest++
 
-Yet another unofficial speedtest.net client cli interface
-
-It supports the new (undocumented) raw TCP protocol for better accuracy.
+This is a fork of the original SpeedTest++ by Francesco Laurita
+(see https://github.com/taganaka/SpeedTest)
 
 ## Features
 
@@ -32,7 +29,7 @@ It supports the new (undocumented) raw TCP protocol for better accuracy.
 
 ```
 $ sudo pkg install git-lite gmake libcurl libssl libxml2
-$ git clone https://github.com/taganaka/SpeedTest
+$ git clone https://git.rgnets.com/oprs1/SpeedTest
 $ cd SpeedTest
 $ make
 $ sudo make install
@@ -42,7 +39,7 @@ $ sudo make install
 
 ```
 $ sudo apt-get install git build-essential libcurl4-openssl-dev libxml2-dev libssl-dev
-$ git clone https://github.com/taganaka/SpeedTest
+$ git clone https://git.rgnets.com/oprs1/SpeedTest
 $ cd SpeedTest
 $ make
 $ sudo make install
@@ -52,7 +49,7 @@ $ sudo make install
 
 ```
 $ sudo zypper install git gcc-c++ libcurl-devel libxml2-devel libopenssl-devel
-$ git clone https://github.com/taganaka/SpeedTest
+$ git clone https://git.rgnets.com/oprs1/SpeedTest
 $ cd SpeedTest
 $ make
 $ sudo make install
@@ -64,7 +61,7 @@ $ sudo make install
 $ ./SpeedTest --help
 SpeedTest++ version 1.8
 Speedtest.net command line interface
-Info: https://github.com/taganaka/SpeedTest
+Info: https://git.rgnets.com/oprs1/SpeedTest
 Author: Francesco Laurita <francesco.laurita@gmail.com>
 
 Usage: ./SpeedTest  [--latency] [--quality] [--download] [--upload] [--share] [--help]
