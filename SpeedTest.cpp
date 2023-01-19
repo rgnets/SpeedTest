@@ -432,31 +432,31 @@ ServerInfo SpeedTest::processServerJSONNode(Json::Value server) {
     auto server_id      = server["id"];
     auto server_sponsor = server["sponsor"];
 
-    if (server_name)
+    if (server_name.isString())
         info.name = server_name.asString();
 
-    if (server_url)
+    if (server_url.isString())
         info.url = server_url.asString();
 
-    if (server_country)
+    if (server_country.isString())
         info.country = server_country.asString();
 
-    if (server_cc)
+    if (server_cc.isString())
         info.country_code = server_cc.asString();
 
-    if (server_host)
+    if (server_host.isString())
         info.host = server_host.asString();
 
-    if (server_sponsor)
+    if (server_sponsor.isString())
         info.sponsor = server_sponsor.asString();
 
-    if (server_id)
+    if (server_id.isString())
         info.id = std::atoi(server_id.asCString());
 
-    if (server_lat)
+    if (server_lat.isString())
         info.lat = std::stof(server_lat.asCString());
 
-    if (server_lon)
+    if (server_lon.isString())
         info.lon = std::stof(server_lon.asCString());
 
     return info;
