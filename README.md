@@ -23,37 +23,38 @@ It supports the new (undocumented) raw TCP protocol for better accuracy.
 ### Requirements
 
 1. A modern C++ compiler
-2. cmake
+2. GNU make
 3. libcurl
 4. libssl
 5. libxml2
 
-### On Mac OS X
+### On FreeBSD
 
 ```
-$ brew install cmake
-$ cd cmake_build
-$ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ make install
+$ sudo pkg install git-lite gmake libcurl libssl libxml2
+$ git clone https://github.com/taganaka/SpeedTest
+$ cd SpeedTest
+$ make
+$ sudo make install
 ```
 
 ### On Ubuntu/Debian
 
 ```
-$ sudo apt-get install build-essential libcurl4-openssl-dev libxml2-dev libssl-dev cmake
+$ sudo apt-get install git build-essential libcurl4-openssl-dev libxml2-dev libssl-dev
 $ git clone https://github.com/taganaka/SpeedTest
 $ cd SpeedTest
-$ cmake -DCMAKE_BUILD_TYPE=Release .
+$ make
 $ sudo make install
 ```
 
 ### On OpenSuse
 
 ```
-$ sudo zypper install cmake gcc-c++ libcurl-devel libxml2-devel libopenssl-devel git
+$ sudo zypper install git gcc-c++ libcurl-devel libxml2-devel libopenssl-devel
 $ git clone https://github.com/taganaka/SpeedTest
 $ cd SpeedTest
-$ cmake -DCMAKE_BUILD_TYPE=Release .
+$ make
 $ sudo make install
 ```
 
