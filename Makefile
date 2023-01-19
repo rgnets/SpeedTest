@@ -15,7 +15,7 @@ CXX       = clang++
 else # if not FreeBSD, just assume Linux
 CXXFLAGS += -I. -I/usr/include -I/usr/include/libxml2 -I/usr/include/jsoncpp
 LDFLAGS  += -L/usr/lib -lcurl -lxml2 -ljsoncpp -lcrypto -lpthread
-CXX       = g++
+CXX      := $(CROSS_COMPILE)g++
 endif
 
 $(TARGET): $(OBJFILES)
