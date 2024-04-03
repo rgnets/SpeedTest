@@ -1,5 +1,5 @@
 
-TARGET    = SpeedTest
+TARGET    = speedtest
 SRCFILES  = $(wildcard *.cpp)
 OBJFILES  = $(patsubst %.cpp,%.o,$(SRCFILES))
 UNAME     = $(shell uname -s)
@@ -7,6 +7,7 @@ UNAME     = $(shell uname -s)
 CXXFLAGS  = -Wall -std=c++11
 LDFLAGS   =
 RM        = rm -f
+INSTALL   = install
 
 ifeq ($(UNAME), FreeBSD)
 CXXFLAGS += -I. -I/usr/local/include -I/usr/local/include/libxml2
@@ -20,14 +21,19 @@ endif
 
 CXXFLAGS += -Wno-pessimizing-move -Wno-deprecated-declarations
 
+all: $(TARGET)
+
 $(TARGET): $(OBJFILES)
 	$(CXX) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
+install:
+	$(INSTALL) -s -m 755 speedtest $(DESTDIR)$(PREFIX)/bin/
+
 clean:
 	$(RM) $(TARGET)
 	$(RM) $(OBJFILES)
 
-.PHONY: clean
+.PHONY: all install clean
