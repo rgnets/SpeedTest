@@ -25,6 +25,10 @@ SpeedTest::~SpeedTest() {
 
 bool SpeedTest::ipInfo(IPInfo& info) {
 
+    Json::CharReaderBuilder builder;
+    Json::Value root;
+    JSONCPP_STRING errs;
+
     if (!mIpInfo.ip_address.empty()){
         info = mIpInfo;
         return true;
@@ -32,20 +36,25 @@ bool SpeedTest::ipInfo(IPInfo& info) {
 
     std::stringstream oss;
     auto code = httpGet(SPEED_TEST_IP_INFO_API_URL, oss);
-    if (code == CURLE_OK){
-        auto values = SpeedTest::parseQueryString(oss.str());
-        mIpInfo = IPInfo();
-        mIpInfo.ip_address = values["ip_address"];
-        mIpInfo.isp = values["isp"];
-        mIpInfo.lat = std::stof(values["lat"]);
-        mIpInfo.lon = std::stof(values["lon"]);
-        values.clear();
-        oss.clear();
-        info = mIpInfo;
-        return true;
+    if (code != CURLE_OK) {
+        std::cerr << "Failed to fetch " << SPEED_TEST_IP_INFO_API_URL << std::endl;
+        return false;
     }
 
-    return false;
+    if (!Json::parseFromStream(builder, oss, &root, &errs)) {
+        std::cerr << "Failed to parse" << std::endl;
+        return false;
+    }
+
+    mIpInfo = IPInfo();
+    mIpInfo.ip_address = root["ip"].asString();
+    mIpInfo.isp        = root["company"]["name"].asString();
+    mIpInfo.lat        = root["location"]["latitude"].asFloat();
+    mIpInfo.lon        = root["location"]["longitude"].asFloat();
+    oss.clear();
+    info = mIpInfo;
+
+    return true;
 }
 
 const std::vector<ServerInfo>& SpeedTest::serverList() {
@@ -184,15 +193,11 @@ double SpeedTest::execute(const ServerInfo &server, const TestConfig &config, co
             auto spClient = SpeedTestClient(server);
 
             if (spClient.connect()) {
-                long total_size = 0;
-                long total_time = 0;
                 auto start = std::chrono::steady_clock::now();
                 std::vector<double> partial_results;
                 while (curr_size < max_size){
                     long op_time = 0;
                     if ((spClient.*pfunc)(curr_size, config.buff_size, op_time)) {
-                        total_size += curr_size;
-                        total_time += op_time;
                         double metric = (curr_size * 8) / (static_cast<double>(op_time) / 1000);
                         partial_results.push_back(metric);
                         if (cb)

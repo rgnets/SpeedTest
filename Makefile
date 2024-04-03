@@ -18,6 +18,8 @@ LDFLAGS  += -L/usr/lib -lcurl -lxml2 -ljsoncpp -lcrypto -lpthread
 CXX      := $(CROSS_COMPILE)g++
 endif
 
+CXXFLAGS += -Wno-pessimizing-move -Wno-deprecated-declarations
+
 $(TARGET): $(OBJFILES)
 	$(CXX) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 

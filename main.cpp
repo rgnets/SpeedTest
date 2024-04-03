@@ -57,7 +57,7 @@ int main(const int argc, const char **argv) {
     IPInfo info;
     ServerInfo serverInfo;
     ServerInfo serverQualityInfo;
-    
+
     if (programOptions.insecure) {
         sp.setInsecure(programOptions.insecure);
     }
@@ -74,7 +74,7 @@ int main(const int argc, const char **argv) {
 
     if (programOptions.output_type == OutputType::verbose){
         std::cout << "IP: " << info.ip_address
-                  << " ( " << info.isp << " ) "
+                  << " (" << info.isp << ") "
                   << "Location: [" << info.lat << ", " << info.lon << "]" << std::endl;
     } else if (programOptions.output_type == OutputType::text) {
         std::cout << "IP=" << info.ip_address << std::endl;
